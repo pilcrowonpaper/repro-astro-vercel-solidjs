@@ -1,6 +1,8 @@
 ---
-const bodyArrayBuffer = await Astro.request.arrayBuffer();
-const uint8array = new Uint8Array(bodyArrayBuffer);
+const clonedRequest = Astro.request.clone();
+await clonedRequest.arrayBuffer();
+const textEncoder = new TextEncoder();
+const uint8array = textEncoder.encode("hello");
 const textDecoder = new TextDecoder();
 console.log(textDecoder.decode(uint8array));
 ---
