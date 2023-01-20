@@ -1,5 +1,4 @@
 import { createSignal } from "solid-js";
-import { submitForm } from "astro-form-actions/client";
 
 type ErrorData = {
 	message: string;
@@ -12,17 +11,12 @@ export default ({
 	error: ErrorData | null;
 	notes: string;
 }) => {
-	const [errorMessage, setErrorMessage] = createSignal(error?.message ?? null);
+	const [errorMessage] = createSignal(error?.message ?? null);
 	return (
 		<form
 			enctype="multipart/form-data"
 			method="post"
 			class="w-full"
-			onSubmit={async (e) => {
-				e.preventDefault()
-				const { error } = await submitForm<{}, ErrorData>(e.currentTarget);
-				setErrorMessage(error?.message ?? null);
-			}}
 		>
 			<p>Type "invalid" to error, "redirect" to redirect</p>
 			<textarea
