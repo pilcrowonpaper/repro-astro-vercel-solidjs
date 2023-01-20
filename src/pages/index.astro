@@ -5,6 +5,7 @@ import {
   resolve,
   redirect,
 } from "astro-form-actions";
+import Message from "../lib/Message";
 
 const { response, error, inputValues } = await handleFormSubmission(
   Astro,
@@ -62,6 +63,7 @@ const notes = inputValues.notes ?? storedNotes;
         class="w-full my-2 bg-black text-white py-1.5 cursor-pointer hover:bg-zinc-800"
       />
     </form>
+    <Message />
     <a
       href="https://github.com/pilcrowOnPaper/astro-form-actions"
       class="hover:underline text-blue-500">Github repo</a
