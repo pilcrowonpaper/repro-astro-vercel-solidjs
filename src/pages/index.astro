@@ -1,5 +1,6 @@
 ---
-console.log(encodeURI("hello"))
+console.log("cookie", Astro.cookies.get("notes").value)
+const storedNotes = decodeURI(Astro.cookies.get("notes").value ?? "");
 ---
 
 <html lang="en">
