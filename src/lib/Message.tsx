@@ -1,3 +1,3 @@
 export default () => {
-    return <p>hello</p>
-}
+  return <p class="w-full">hello</p>;
+};
