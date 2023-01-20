@@ -1,65 +1,57 @@
 ---
 import {
-  handleFormSubmission,
-  reject,
-  redirect,
-  resolve,
+	handleFormSubmission,
+	reject,
+	resolve,
+	redirect
 } from "astro-form-actions";
+import Form from "../lib/form";
 
-const { inputValues, error } = await handleFormSubmission(
-  Astro,
-  async (formData) => {
-    const notes = formData.get("notes") ?? "";
-    if (typeof notes !== "string")
-      return reject(400, {
-        message: "bad input",
-      });
-    if (notes === "invalid")
-      return reject(400, {
-        message: "invalid input",
-      });
-    if (notes === "redirect")
-      return redirect(
-        302,
-        "https://github.com/pilcrowOnPaper/astro-form-actions"
-      );
-    Astro.cookies.set("notes", encodeURI(notes), {
-      path: "/",
-      httpOnly: true,
-    });
-    return resolve({});
-  }
+const { response, error, inputValues } = await handleFormSubmission(
+	Astro,
+	async (formData) => {
+		const notes = formData.get("notes") ?? "";
+		if (typeof notes !== "string")
+			return reject(400, {
+				message: "bad input"
+			});
+		if (notes === "invalid")
+			return reject(400, {
+				message: "invalid input"
+			});
+		if (notes === "redirect")
+			return redirect(
+				302,
+				"https://github.com/pilcrowOnPaper/astro-form-actions"
+			);
+		Astro.cookies.set("notes", encodeURI(notes), {
+			path: "/",
+			httpOnly: true
+		});
+		return resolve({});
+	}
 );
+if (response) return response;
 const storedNotes = decodeURI(Astro.cookies.get("notes").value ?? "");
 const notes = inputValues.notes ?? storedNotes;
 ---
 
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
-  </head>
-  <body class="max-w-md px-4 mx-auto py-12">
-    <h1 class="text-3xl font-bold mb-4">Astro form actions</h1>
-    <p>This form works without JavaScript as well.</p>
-    <h2 class="text-xl font-semibold mt-4 mb-1">Notes</h2>
-    <form enctype="multipart/form-data" method="post" class="w-full">
-      <p>Type "invalid" to error, "redirect" to redirect</p>
-      <textarea
-        name="notes"
-        id="notes"
-        class="w-full px-2 py-1.5 border"
-        rows="3">{notes}</textarea
-      >
-      <p class="text-red-400">{error?.message}</p>
-      <input
-        type="submit"
-        value="Save"
-        class="w-full my-2 bg-black text-white py-1.5 cursor-pointer hover:bg-zinc-800"
-      />
-    </form>
-  </body>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro form actions demo</title>
+	</head>
+	<body class="max-w-md px-4 mx-auto py-12">
+		<h1 class="text-3xl font-bold mb-4">Astro form actions</h1>
+		<p>This form works without JavaScript as well.</p>
+		<h2 class="text-xl font-semibold mt-4 mb-1">Notes</h2>
+		<Form error={error} notes={notes} client:load />
+		<a
+			href="https://github.com/pilcrowOnPaper/astro-form-actions"
+			class="hover:underline text-blue-500">Github repo</a
+		>
+	</body>
 </html>
