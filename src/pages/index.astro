@@ -1,22 +1,8 @@
 ---
 import type { AstroGlobal } from "astro";
 
-type ExtractResolveResponse<Handle extends (...args: any) => any> = Extract<
-  Awaited<ReturnType<Handle>>,
-  InstanceType<any>
->;
 
-type ExtractRejectResponse<Handle extends (...args: any) => any> = Extract<
-  Awaited<ReturnType<Handle>>,
-  InstanceType<any>
->;
-
-type ExtractRedirectResponse<Handle extends (...args: any) => any> = Extract<
-  Awaited<ReturnType<Handle>>,
-  InstanceType<any>
->;
-
-export const handleFormSubmission = async <
+const handleFormSubmission = async <
   Handle extends (
     formData: FormData
   ) => Promise<InstanceType<any> | InstanceType<any> | InstanceType<any>>
