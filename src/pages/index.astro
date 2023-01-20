@@ -53,10 +53,8 @@ const notes = inputValues.notes ?? storedNotes;
         name="notes"
         id="notes"
         class="w-full px-2 py-1.5 border"
-        rows="3"
+        rows="3">{notes}</textarea
       >
-        {notes}
-      </textarea>
       <p class="text-red-400">{error?.message}</p>
       <input
         type="submit"
