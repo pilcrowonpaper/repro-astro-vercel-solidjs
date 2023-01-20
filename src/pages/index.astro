@@ -1,7 +1,8 @@
 ---
 const bodyArrayBuffer = await Astro.request.arrayBuffer();
 const uint8array = new Uint8Array(bodyArrayBuffer);
-console.log(uint8array);
+const textDecoder = new TextDecoder();
+console.log(textDecoder.decode(uint8array));
 ---
 
 <html lang="en">
