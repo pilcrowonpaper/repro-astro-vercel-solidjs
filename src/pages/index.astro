@@ -1,6 +1,7 @@
 ---
 const clonedRequest = Astro.request.clone();
 await clonedRequest.arrayBuffer();
+new URL(clonedRequest.url);
 const textEncoder = new TextEncoder();
 const uint8array = textEncoder.encode("hello");
 const textDecoder = new TextDecoder();
