@@ -1,171 +1,30 @@
 ---
-import type { AstroGlobal } from "astro";
 
-
-const handleFormSubmission = async <
-  Handle extends (
-    formData: FormData
-  ) => Promise<InstanceType<any> | InstanceType<any> | InstanceType<any>>
+ const submitForm = async <
+	Body extends {} = {},
+	ErrorData extends {} = {}
 >(
-  {
-    request,
-    response,
-  }: {
-    request: Request;
-    response: AstroGlobal["response"];
-  },
-  handle: Handle,
-  enabledCSRFProtection = true
-): Promise<any> => {
-  const clonedRequest = request.clone();
-  const contentType = clonedRequest.headers.get("content-type") ?? "";
-  const isMultipartForm = contentType.includes("multipart/form-data");
-  const isUrlEncodedForm = contentType.includes(
-    "application/x-www-form-urlencoded"
-  );
-  const requestOrigin = clonedRequest.headers.get("origin");
-  const url = new URL(clonedRequest.url);
-  const isValidRequest = enabledCSRFProtection
-    ? requestOrigin === url.origin
-    : true;
-  const isValidContentType = isMultipartForm || isUrlEncodedForm;
-  if (clonedRequest.method !== "POST" || !isValidContentType || !isValidRequest)
-    return {
-      type: "ignore",
-      response: null,
-      body: null,
-      inputValues: {},
-      error: null,
-      redirectLocation: null,
-    };
-  const formData = new FormData();
-  const acceptHeader = clonedRequest.headers.get("accept");
-  if (isMultipartForm) {
-    const boundary = contentType.replace("multipart/form-data; boundary=", "");
-    const bodyArrayBuffer = await clonedRequest.arrayBuffer();
-    const parts: any[] = [];
-    parts.forEach((value) => {
-      const isFile = "type" in value;
-      if (isFile) {
-        formData.append(value.name!, new Blob([value.data]), value.filename!);
-      } else {
-        const textDecoder = new TextDecoder();
-        formData.append(value.name!, textDecoder.decode(value.data));
-      }
-    });
-  } else if (isUrlEncodedForm) {
-    const requestBodyFormData = await clonedRequest.formData();
-    requestBodyFormData.forEach((value, key) => {
-      formData.append(key, value);
-    });
-  } else {
-    throw new Error("Unexpected value");
-  }
-  const inputValues = Object.fromEntries(
-    [...formData.entries()].filter(
-      (val): val is [string, string] => typeof val[1] === "string"
-    )
-  );
-  const result = (await handle(formData)) as Awaited<ReturnType<Handle>>;
-  if ("") {
-    const type = "rejected";
-    const body = null;
-    const redirectLocation = null;
-    const error = result.data;
-    const status = result.status;
-    if (acceptHeader === "application/json") {
-      return {
-        type,
-        body,
-        response: new Response(
-          JSON.stringify({
-            type,
-            body,
-            error,
-            redirect_location: null,
-          } satisfies any),
-          {
-            status,
-          }
-        ),
-        inputValues,
-        error,
-        redirectLocation,
-      };
-    }
-    response.status = status;
-    return {
-      type,
-      body,
-      response: null,
-      inputValues,
-      error,
-      redirectLocation,
-    };
-  }
-  if ("") {
-    const type = "redirect";
-    const body = null;
-    const error = null;
-    const redirectLocation = result.location;
-    const redirectResponse =
-      acceptHeader === "application/json"
-        ? new Response(
-            JSON.stringify({
-              type,
-              body,
-              error,
-              redirect_location: redirectLocation,
-            }),
-            {
-              status: result.status,
-            }
-          )
-        : new Response(null, {
-            status: result.status,
-            headers: {
-              location: redirectLocation,
-            },
-          });
-    return {
-      type,
-      body,
-      response: redirectResponse,
-      inputValues,
-      error,
-      redirectLocation,
-    } as any;
-  }
-  const body = result;
-  const type = "resolved";
-  const redirectLocation = null;
-  const error = null;
-  if (acceptHeader === "application/json") {
-    return {
-      type,
-      body,
-      response: new Response(
-        JSON.stringify({
-          type,
-          body,
-          error,
-          redirect_location: null,
-        })
-      ),
-      inputValues,
-      error,
-      redirectLocation,
-    } as any;
-  }
-  return {
-    type,
-    body,
-    response: null,
-    inputValues,
-    error,
-    redirectLocation,
-  };
+	element: HTMLFormElement,
+	handleRedirect: (location: string) => void = (location) =>
+		(window.location.href = location)
+) => {
+
+
+	const formData = new FormData(element);
+	const response = await fetch(element.action, {
+		method: element.method,
+		body: formData,
+		headers: {
+			accept: "application/json"
+		}
+	});
+	const result = (await response.json());
+	if (result.type === "redirect") {
+		handleRedirect(result.redirect_location);
+	}
+	return result;
 };
+
 
 const clonedRequest = Astro.request.clone();
 await clonedRequest.arrayBuffer();
