@@ -1,9 +1,9 @@
 ---
 import { handleFormSubmission } from "../lib";
 
-if (false) {
-	handleFormSubmission()
-}
+await handleFormSubmission(Astro, async () => {
+	return {} as any
+})
 ---
 
 <html lang="en">
