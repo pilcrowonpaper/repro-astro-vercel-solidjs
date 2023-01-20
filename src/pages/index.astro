@@ -1,9 +1,37 @@
 ---
-import { handleFormSubmission } from "astro-form-actions"
+import {
+  handleFormSubmission,
+  reject,
+  redirect,
+  resolve,
+} from "astro-form-actions";
 
-await handleFormSubmission(Astro, async () => {
-	return {} as any
-})
+const { inputValues, error } = await handleFormSubmission(
+  Astro,
+  async (formData) => {
+    const notes = formData.get("notes") ?? "";
+    if (typeof notes !== "string")
+      return reject(400, {
+        message: "bad input",
+      });
+    if (notes === "invalid")
+      return reject(400, {
+        message: "invalid input",
+      });
+    if (notes === "redirect")
+      return redirect(
+        302,
+        "https://github.com/pilcrowOnPaper/astro-form-actions"
+      );
+    Astro.cookies.set("notes", encodeURI(notes), {
+      path: "/",
+      httpOnly: true,
+    });
+    return resolve({});
+  }
+);
+const storedNotes = decodeURI(Astro.cookies.get("notes").value ?? "");
+const notes = inputValues.notes ?? storedNotes;
 ---
 
 <html lang="en">
@@ -16,5 +44,22 @@ await handleFormSubmission(Astro, async () => {
   </head>
   <body>
     <h1>Hello</h1>
+    <form enctype="multipart/form-data" method="post" class="w-full">
+      <p>Type "invalid" to error, "redirect" to redirect</p>
+      <textarea
+        name="notes"
+        id="notes"
+        class="w-full px-2 py-1.5 border"
+        rows="3"
+      >
+        {notes}
+      </textarea>
+      <p class="text-red-400">{error?.message}</p>
+      <input
+        type="submit"
+        value="Save"
+        class="w-full my-2 bg-black text-white py-1.5 cursor-pointer hover:bg-zinc-800"
+      />
+    </form>
   </body>
 </html>
