@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/vercel": "^2.4.0",
-    "astro": "^1.9.0"
+    "astro": "^1.9.0",
+    "astro-form-actions": "^0.3.2"
   }
 }

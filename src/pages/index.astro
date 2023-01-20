@@ -1,6 +1,9 @@
 ---
-console.log("cookie", Astro.cookies.get("notes").value)
-const storedNotes = decodeURI(Astro.cookies.get("notes").value ?? "");
+import { handleFormSubmission } from "astro-form-actions"
+
+await handleFormSubmission(Astro, async () => {
+	return {} as any
+})
 ---
 
 <html lang="en">
