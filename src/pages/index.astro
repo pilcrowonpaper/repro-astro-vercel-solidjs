@@ -42,8 +42,10 @@ const notes = inputValues.notes ?? storedNotes;
     <meta name="generator" content={Astro.generator} />
     <title>Astro</title>
   </head>
-  <body>
-    <h1>Hello</h1>
+  <body class="max-w-md px-4 mx-auto py-12">
+    <h1 class="text-3xl font-bold mb-4">Astro form actions</h1>
+    <p>This form works without JavaScript as well.</p>
+    <h2 class="text-xl font-semibold mt-4 mb-1">Notes</h2>
     <form enctype="multipart/form-data" method="post" class="w-full">
       <p>Type "invalid" to error, "redirect" to redirect</p>
       <textarea
