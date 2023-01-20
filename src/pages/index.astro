@@ -7,7 +7,7 @@ const uint8array = textEncoder.encode("hello");
 const textDecoder = new TextDecoder();
 console.log(textDecoder.decode(uint8array));
 const blob = new Blob([uint8array]);
-console.log(textDecoder.decode(blob.arrayBuffer));
+// console.log(textDecoder.decode(blob.arrayBuffer));
 ---
 
 <html lang="en">
